@@ -15,7 +15,9 @@ RUN apt-get install -y dotnet-sdk-5.0
 RUN DEBIAN_FRONTEND=noninteractive apt install nuget -y
 
 RUN ["pwsh", "-c", "Install-Module PSScriptAnalyzer,PSHTMLTable -Force"]
-WORKDIR /build
+WORKDIR /app
+COPY build-module.ps1 /app/build-module.ps1 
+COPY BuildFunctions.ps1 /app/BuildFunctions.ps1 
 
 VOLUME "/build"
-CMD ["pwsh","-c", "/build/Modules/Build-ALLFCModules.ps1"]
+ENTRYPOINT ["pwsh","-c", "/app/build-module.ps1"]

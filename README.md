@@ -1,4 +1,15 @@
 # friendly-chainsaw-docker
-docker images for building and testing friendly-chainsaw powershell/pwsh modules
+This is docker images that I use to build/test my [friendly-chainsaw](https://github.com/brandonmcclure/friendly-chainsaw) powershell modules
 
-I have what I would call a jankity build process for my modules. Sometimes I write powershell that does not fit into the friendly-chainsaw world, and it would be nice if I could shore up by build/publish process and provide a better template to get a script module setup with ci 
+## Example
+With a script module directory like:
+```
+-MyModule
+--public
+----Invoke-MyFunction.ps1
+--MyModule.psm1
+--MyModule.psd1
+```
+
+From one level above the `MyModule` directory, run the following: 
+`docker run --rm -it -w /build -v $${PWD}:/build bmcclure89/fc_pwsh_build -moduleName @('MyModule.psm1') -Verbose -moduleAuthor "Brandon McClure"`
