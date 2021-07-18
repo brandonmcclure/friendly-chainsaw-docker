@@ -2,7 +2,7 @@ FROM microsoft/powershell
 
 LABEL maintainer="Brandon McClure (brandonmcclure89@gmail.com)"
 
-# Install Dotnet core 
+# Install Dotnet core, needed for nuget
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
 RUN apt-get update --yes \
 && apt-get install -y wget \

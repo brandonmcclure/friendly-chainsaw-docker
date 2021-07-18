@@ -76,7 +76,7 @@ try {
 		$commandList = Get-Command -Module $moduleName
 		Remove-Module $moduleName -Force -ErrorAction Ignore
 
-		Update-ModuleManifest -Path $ManifestPath -FunctionsToExport $commandList
+		Update-ModuleManifest -Path $ManifestPath -FunctionsToExport ($commandList | select -ExpandProperty Name)
 
 		Write-Host 'Calculating fingerprint'
 		$fingerprint = foreach ( $command in $commandList ) {
