@@ -22,11 +22,14 @@ TAG := :latest
 
 all: build_fc_pwsh_build build_fc_pwsh_test
 
-build_fc_pwsh_build:
-	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG) -f Dockerfile.build .
+getcommitid: 
+	$(eval COMMITID = $(shell git log -1 --pretty=format:"%H"))
 
-build_fc_pwsh_test:
-	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG) -f Dockerfile.test .
+build_fc_pwsh_build: getcommitid
+	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(COMMITID) -f Dockerfile.build .
+
+build_fc_pwsh_test: getcommitid
+	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(COMMITID) -f Dockerfile.test .
 
 package: package_fc_pwsh_build package_fc_pwsh_test
 
@@ -39,7 +42,7 @@ package_fc_pwsh_test: build_fc_pwsh_test
 publish: publish_fc_pwsh_test publish_fc_pwsh_build
 
 publish_fc_pwsh_test: build_fc_pwsh_test
-	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG);
+	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(COMMITID);
 
 publish_fc_pwsh_build: build_fc_pwsh_build
-	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG); 
+	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(COMMITID); 
