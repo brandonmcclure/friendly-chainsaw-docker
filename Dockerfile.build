@@ -1,4 +1,4 @@
-FROM microsoft/powershell
+FROM mcr.microsoft.com/powershell:lts-ubuntu-18.04
 
 LABEL maintainer="Brandon McClure (brandonmcclure89@gmail.com)"
 
@@ -14,7 +14,7 @@ RUN apt-get update --yes
 RUN apt-get install -y dotnet-sdk-5.0 
 RUN DEBIAN_FRONTEND=noninteractive apt install nuget -y
 
-RUN ["pwsh", "-c", "Install-Module PSScriptAnalyzer,PSHTMLTable -Force"]
+RUN ["pwsh", "-c", "Install-Module PSScriptAnalyzer,PSHTMLTable,BuildHelpers -Force"]
 WORKDIR /app
 COPY build-module.ps1 /app/build-module.ps1 
 COPY BuildFunctions.ps1 /app/BuildFunctions.ps1 
