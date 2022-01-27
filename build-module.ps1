@@ -27,9 +27,11 @@ $origLocation = Get-Location
 
 try {
 	if ([string]::IsNullOrEmpty($moduleName)) {
+		Write-Verbose "Looking for all modules in $pathToSearch"
 		$modules = Get-ChildItem -Path $pathToSearch  -Recurse | where { $_.Extension -eq '.psm1' }
 	}
 	else {
+		Write-Verbose "Looking for modules with user defined names in $pathToSearch"
 		$modules = Get-ChildItem -Path $pathToSearch  -Recurse | where { $_.Extension -eq '.psm1' -and $_.Name -in $moduleName }
 	}
 	foreach ($module in $modules) {
