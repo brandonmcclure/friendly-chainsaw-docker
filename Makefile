@@ -25,11 +25,14 @@ all: build_fc_pwsh_build build_fc_pwsh_test
 getcommitid: 
 	$(eval COMMITID = $(shell git log -1 --pretty=format:"%H"))
 
-build_fc_pwsh_build: getcommitid
-	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(COMMITID) -f Dockerfile.build .
+getbranchname:
+	$(eval BRANCH_NAME = $(shell (git branch --show-current ) -replace '/','.'))
 
-build_fc_pwsh_test: getcommitid
-	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(COMMITID) -f Dockerfile.test .
+build_fc_pwsh_build: getcommitid getbranchname
+	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME).$(COMMITID) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME) -f Dockerfile.build .
+
+build_fc_pwsh_test: getcommitid getbranchname
+	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME).$(COMMITID) -f Dockerfile.test .
 
 package: package_fc_pwsh_build package_fc_pwsh_test
 
@@ -42,7 +45,7 @@ package_fc_pwsh_test: build_fc_pwsh_test
 publish: publish_fc_pwsh_test publish_fc_pwsh_build
 
 publish_fc_pwsh_test: build_fc_pwsh_test
-	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(COMMITID);
+	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME).$(COMMITID);
 
 publish_fc_pwsh_build: build_fc_pwsh_build
-	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(COMMITID); 
+	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME).$(COMMITID); 
