@@ -52,8 +52,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         if: github.ref != 'refs/heads/main'
         with:
-          context: .
-          dockerfile: "Dockerfile.build"
+          context: ./src/fc_pwsh_build
           load: true
           push: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -62,8 +61,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         if: github.ref == 'refs/heads/main'
         with:
-          context: .
-          dockerfile: "Dockerfile.build"
+          context: ./src/fc_pwsh_build
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }} 
