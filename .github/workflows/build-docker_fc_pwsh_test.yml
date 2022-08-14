@@ -1,4 +1,4 @@
-name: Docker - learnGitBranching image
+name: Docker - fc_pwsh_test image
 
 on:
   workflow_dispatch:
@@ -6,18 +6,18 @@ on:
     branches:
       - main  # Trigger CI on main branch
     paths: 
-      - '**/*'
-      - '.github/workflows/build-docker.yml'
+      - src/fc_pwsh_test/*'
+      - '.github/workflows/build-docker_fc_pwsh_test.yml'
   pull_request:
     branches:
       - main  # Trigger gated pipeline on PR to main
     paths:
-      - '**/*'
-      - '.github/workflows/build-docker.yml'
+      - src/fc_pwsh_test/*'
+      - '.github/workflows/build-docker_fc_pwsh_test.yml'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: brandonmcclure/fc_pwsh_build
+  IMAGE_NAME: brandonmcclure/fc_pwsh_test
 
 jobs:
   build-and-push-image:
@@ -52,7 +52,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         if: github.ref != 'refs/heads/main'
         with:
-          context: ./src/fc_pwsh_build
+          context: ./src/fc_pwsh_test
           load: true
           push: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -61,7 +61,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         if: github.ref == 'refs/heads/main'
         with:
-          context: ./src/fc_pwsh_build
+          context: ./src/fc_pwsh_test
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }} 
@@ -70,9 +70,9 @@ jobs:
         with:
           string: ${{ env.IMAGE_NAME }}
       - name: Save Docker Image archive to local filesystem
-        run: "docker save --output learnGitBranching.tar ${{env.REGISTRY}}/${{ steps.lowercaseImageName.outputs.lowercase }}"
+        run: "docker save --output fc_pwsh_test.tar ${{env.REGISTRY}}/${{ steps.lowercaseImageName.outputs.lowercase }}"
       - name: Upload application's Docker Image as pipeline artifact
         uses: actions/upload-artifact@v2
         with:
-          path: learnGitBranching.tar
-          name: learnGitBranching.tar
+          path: fc_pwsh_test.tar
+          name: fc_pwsh_test.tar
