@@ -17,7 +17,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{env.GITHUB.REPOSITORY.OWNER}}/fc_pwsh_build
+  IMAGE_NAME: ${{GITHUB.REPOSITORY.OWNER}}/fc_pwsh_build
 
 jobs:
   build-and-push-image:
