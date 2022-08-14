@@ -53,7 +53,7 @@ jobs:
         if: github.ref != 'refs/heads/main'
         with:
           context: .
-          dockerfile: Dockerfile.build
+          dockerfile: "Dockerfile.build"
           load: true
           push: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -63,7 +63,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           context: .
-          dockerfile: Dockerfile.build
+          dockerfile: "Dockerfile.build"
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }} 
