@@ -26,3 +26,4 @@ run the following to build all the modules in the individuals folders:
 to build a single module:
 `docker run --rm -it -w /build -v $${PWD}:/build bmcclure89/fc_pwsh_build -moduleName @('MyModule.psm1') -Verbose -moduleAuthor "Brandon McClure"`
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/brandonmcclure/friendly-chainsaw-docker/blob/main/readme.md)
