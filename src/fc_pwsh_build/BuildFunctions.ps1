@@ -1,9 +1,9 @@
 function Update-ManifestFromConfig {
 	param($ManifestConfigPath,$ManifestPath,$moduleName)
-	Write-Host "Loading configuration data from $ManifestConfigPath"
+	Write-Output "Loading configuration data from $ManifestConfigPath"
 	$configData = Get-Content $ManifestConfigPath | ConvertFrom-Json
 	if (Test-Path $ManifestPath) {
-	  Write-Host "Manifest already exists"
+	  Write-Output "Manifest already exists"
 	  if (![string]::IsNullOrEmpty($configData.Author)) {
 		Update-ModuleManifest -Path $ManifestPath -Author $configData.Author
 	  }
@@ -21,7 +21,7 @@ function Update-ManifestFromConfig {
 	  New-ModuleManifest -Path $ManifestPath -Author $configData.Author -Description $configData.Description -RootModule $moduleName -ModuleVersion "1.0" -PowerShellVersion $configData.PSVersion -RequiredModules $configData.requiredModules -NestedModules $configData.nestedModules | Out-Null
 	}
 	Test-ModuleManifest -Path $ManifestPath -ErrorAction Stop
-	Write-Host "Module manifest creation/testing complete"
+	Write-Output "Module manifest creation/testing complete"
   }
   
   function Invoke-ScriptAnalyserWithReport {

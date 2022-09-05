@@ -1,0 +1,6 @@
+{
+  "checks": {
+    "typography.symbols": false,
+	"misc.phrasal_adjectives": false
+  }
+}

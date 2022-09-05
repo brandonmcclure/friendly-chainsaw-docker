@@ -14,6 +14,7 @@ else
 	SHELL := pwsh
 endif
 
+.PHONY: all clean test lint package publish
 .SHELLFLAGS := -NoProfile -Command
 
 REGISTRY_NAME := 
@@ -49,3 +50,12 @@ publish_fc_pwsh_test: build_fc_pwsh_test
 
 publish_fc_pwsh_build: build_fc_pwsh_build
 	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME).$(COMMITID); 
+
+lint: lint_mega lint_credo
+
+lint_mega:
+	docker run -v $${PWD}:/tmp/lint oxsecurity/megalinter:v6
+lint_goodcheck:
+	docker run -t --rm -v $${PWD}:/work sider/goodcheck check
+lint_goodcheck_test:
+	docker run -t --rm -v $${PWD}:/work sider/goodcheck test

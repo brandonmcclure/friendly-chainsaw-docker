@@ -1,0 +1,26 @@
+---
+rules:
+  - id: mcd.nogremlins
+    pattern:
+      - ”
+      - “
+      - ’
+    severity: warning
+    message: |
+      You are using a Non ASCII character in your code. This can cause some problems, especially depending on the type of character you used. Often these look like spaces or other common characters, and can be hard to find. To search your code for these files, look for the regexp pattern: '[^\x1F-\x7F]+'
+      When in doubt, replace the character with a space.
+    pass:
+      - boring space
+      - boring "
+      - boring '
+    fail:
+      - ”
+      - “
+      - ’
+# You can skip checking files.
+exclude:
+  - megalinter-report
+  - "goodcheck.yml"
+exclude_binary: true
+severity:
+  required: true

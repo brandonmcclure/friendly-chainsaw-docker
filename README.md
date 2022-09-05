@@ -20,9 +20,9 @@ With a script module directory like:
 
 From one level above the `MyModule` directory, we are going to run a container and bind mount to the `/build` path on the container to our local current directory (`${pwd}`).
 
-run the following to build all the modules in the indiviudal folders: 
+run the following to build all the modules in the individuals folders:
 `docker run --rm -it -w /build -v $${PWD}:/build bmcclure89/fc_pwsh_build -Verbose -moduleAuthor "Brandon McClure"`
 
-to build a single module: 
+to build a single module:
 `docker run --rm -it -w /build -v $${PWD}:/build bmcclure89/fc_pwsh_build -moduleName @('MyModule.psm1') -Verbose -moduleAuthor "Brandon McClure"`
 
