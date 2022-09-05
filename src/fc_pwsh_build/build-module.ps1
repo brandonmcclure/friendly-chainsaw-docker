@@ -1,10 +1,6 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	[ValidateSet("Debug", "Info", "Warning", "Error", "Disable")][string] $logLevel = "Debug",
-
 	[parameter(Mandatory = $false)][string[]] $moduleName = @()
-	, [parameter(Mandatory = $false)][string]$moduleDescription = $null
-	, [parameter(Mandatory = $true)][string] $moduleAuthor
 	,[string]$pathToSearch = (Split-Path $PSCommandPath -Parent)
 	, [switch] $forceConfigUpdate = $true
 	, [switch] $skipScriptAnalyzer = $true
@@ -27,10 +23,10 @@ $origLocation = Get-Location
 
 try {
 	if ([string]::IsNullOrEmpty($moduleName)) {
-		$modules = Get-ChildItem -Path $pathToSearch  -Recurse | where { $_.Extension -eq '.psm1' }
+		$modules = Get-ChildItem -Path $pathToSearch  -Recurse | Where-Object { $_.Extension -eq '.psm1' }
 	}
 	else {
-		$modules = Get-ChildItem -Path $pathToSearch  -Recurse | where { $_.Extension -eq '.psm1' -and $_.Name -in $moduleName }
+		$modules = Get-ChildItem -Path $pathToSearch  -Recurse | Where-Object { $_.Extension -eq '.psm1' -and $_.Name -in $moduleName }
 	}
 	foreach ($module in $modules) {
 		$ModuleName = $module.BaseName 
@@ -43,15 +39,15 @@ try {
 		Write-Verbose "ManifestConfigPath: $ManifestConfigPath"
 		$updateManifestFromConfig = 0
         
-		Write-Host "Checking the $ModuleName module"
-		Write-Host "At: $modulePath"
+		Write-Output "Checking the $ModuleName module"
+		Write-Output "At: $modulePath"
 		Remove-Module $ModuleName -ErrorAction Ignore
         
-		Write-Host "Does a module manifest exist?"
+		Write-Output "Does a module manifest exist?"
 		If (!(Test-Path $ManifestPath)) {
-			Write-Host "Manifest does not exist, does a configuration exist?"
+			Write-Output "Manifest does not exist, does a configuration exist?"
 			If (!(Test-Path $ManifestConfigPath)) {
-				Write-Host "Manifest config does not exist, skipping"
+				Write-Output "Manifest config does not exist, skipping"
 				break
 			}
 
@@ -60,10 +56,10 @@ try {
 
 		if ($updateManifestFromConfig -eq 1 -or $forceConfigUpdate) {
 			if ($forceConfigUpdate) {
-				Write-Host "Forcibly updating the manifest from the config if it exists"
+				Write-Output "Forcibly updating the manifest from the config if it exists"
 			}
 			If (!(Test-Path $ManifestConfigPath)) {
-				Write-Host "Manifest config does not exist, skipping"
+				Write-Output "Manifest config does not exist, skipping"
 			}
 			else {
 				Update-ManifestFromConfig -ManifestConfigPath $ManifestConfigPath -ManifestPath $ManifestPath -moduleName $moduleName
@@ -72,13 +68,13 @@ try {
 
 		Remove-Module $moduleName -Force -ErrorAction Ignore
 		Import-Module $modulePath -Force -ErrorAction Stop
-		Get-Module $moduleName | fl
+		Get-Module $moduleName | Format-List
 		$commandList = Get-Command -Module $moduleName
 		Remove-Module $moduleName -Force -ErrorAction Ignore
 
-		Update-ModuleManifest -Path $ManifestPath -FunctionsToExport ($commandList | select -ExpandProperty Name)
+		Update-ModuleManifest -Path $ManifestPath -FunctionsToExport ($commandList | Select-Object -ExpandProperty Name)
 
-		Write-Host 'Calculating fingerprint'
+		Write-Output 'Calculating fingerprint'
 		$fingerprint = foreach ( $command in $commandList ) {
 			foreach ( $parameter in $command.parameters.keys ) {
 				'{0}:{1}' -f $command.name, $command.parameters[$parameter].Name
@@ -90,17 +86,17 @@ try {
 			$oldFingerprint = Get-Content "$moduleDir\fingerprint"
 		}
 
-		Write-Host "There are $($fingerprint | Measure-Object | Select -ExpandProperty Count) Fingerprint items"
-		Write-Host "There are $($oldFingerprint | Measure-Object | Select -ExpandProperty Count) oldFingerprint items"
+		Write-Output "There are $($fingerprint | Measure-Object | Select-Object -ExpandProperty Count) Fingerprint items"
+		Write-Output "There are $($oldFingerprint | Measure-Object | Select-Object -ExpandProperty Count) oldFingerprint items"
 		$bumpVersionType = ''
 
-		$fingerprint | Where { $_ -notin $oldFingerprint } | 
+		$fingerprint | Where-Object { $_ -notin $oldFingerprint } | 
 		ForEach-Object { $bumpVersionType = 'Patch'; "  $_" }
 		'Detecting new features'
-		$fingerprint | Where { $_ -notin $oldFingerprint } | 
+		$fingerprint | Where-Object { $_ -notin $oldFingerprint } | 
 		ForEach-Object { $bumpVersionType = 'Minor'; "  $_" }
 		'Detecting breaking changes'
-		$oldFingerprint | Where { $_ -notin $fingerprint } | 
+		$oldFingerprint | Where-Object { $_ -notin $fingerprint } | 
 		ForEach-Object { $bumpVersionType = 'Major'; "  $_" }
 
 		Write-Verbose "Bumpversion: $bumpVersionType"

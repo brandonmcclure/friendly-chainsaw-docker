@@ -14,6 +14,7 @@ else
 	SHELL := pwsh
 endif
 
+.PHONY: all clean test build lint package publish
 .SHELLFLAGS := -NoProfile -Command
 
 REGISTRY_NAME := 
@@ -28,11 +29,13 @@ getcommitid:
 getbranchname:
 	$(eval BRANCH_NAME = $(shell (git branch --show-current ) -replace '/','.'))
 
+build: build_fc_pwsh_build build_fc_pwsh_test
+
 build_fc_pwsh_build: getcommitid getbranchname
-	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME).$(COMMITID) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME) -f Dockerfile.build .
+	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME).$(COMMITID) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME) ./src/fc_pwsh_build
 
 build_fc_pwsh_test: getcommitid getbranchname
-	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME).$(COMMITID) -f Dockerfile.test .
+	$(Q)docker build -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test$(TAG) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME) -t $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_test:$(BRANCH_NAME).$(COMMITID) ./src/fc_pwsh_test
 
 package: package_fc_pwsh_build package_fc_pwsh_test
 
@@ -49,3 +52,12 @@ publish_fc_pwsh_test: build_fc_pwsh_test
 
 publish_fc_pwsh_build: build_fc_pwsh_build
 	$(Q)docker login; docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build$(TAG); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME); docker push $(REGISTRY_NAME)$(REPOSITORY_NAME)fc_pwsh_build:$(BRANCH_NAME).$(COMMITID); 
+
+lint: lint_mega lint_credo
+
+lint_mega:
+	docker run -v $${PWD}:/tmp/lint oxsecurity/megalinter:v6
+lint_goodcheck:
+	docker run -t --rm -v $${PWD}:/work sider/goodcheck check
+lint_goodcheck_test:
+	docker run -t --rm -v $${PWD}:/work sider/goodcheck test
