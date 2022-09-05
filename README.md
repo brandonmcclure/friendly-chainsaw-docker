@@ -5,7 +5,7 @@ This is docker images that I use to build/test my [friendly-chainsaw](https://gi
 ## How to use
 
 With a script module directory like:
-```
+```console
 -MyModule
 --public
 ----Get-Foo.ps1
