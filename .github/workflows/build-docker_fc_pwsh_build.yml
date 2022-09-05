@@ -2,6 +2,8 @@ name: Docker - docker_fc_pwsh_build image
 
 on:
   workflow_dispatch:
+  schedule: 
+    - cron: '0 0 * * 0'
   push:
     branches:
       - main  # Trigger CI on main branch
