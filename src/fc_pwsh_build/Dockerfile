@@ -13,8 +13,8 @@ RUN apt-get update --yes  \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN apt-get update --yes \
   && apt-get install -y dotnet-sdk-5.0 --no-install-recommends \
+  && apt-get install nuget -y --no-install-recommends \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN DEBIAN_FRONTEND=noninteractive apt install nuget -y
 
 RUN ["pwsh", "-c", "Install-Module PSScriptAnalyzer,PSHTMLTable -Force"]
 WORKDIR /app
