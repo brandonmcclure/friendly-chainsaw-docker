@@ -1,6 +1,6 @@
-name: 'friendly-chainsaw-pwsh-build'
-description: 'An opinionated pwsh core build system.'
+name: "friendly-chainsaw-pwsh-build"
+description: "An opinionated pwsh core build system."
 author: Brandon McClure <brandonmcclure89@gmail.com>
 runs:
-  using: 'docker'
-  image: 'docker://bmcclure89/fc_pwsh_build:main'
+  using: "docker"
+  image: "docker://bmcclure89/fc_pwsh_build:main"
