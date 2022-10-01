@@ -1,0 +1,5 @@
+name: 'friendly-chainsaw-pwsh-build'
+description: 'An opinionated pwsh core build system.'
+runs:
+  using: 'docker'
+  image: 'docker://bmcclure89/fc_pwsh_build:main'
