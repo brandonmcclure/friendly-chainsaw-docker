@@ -116,7 +116,7 @@ try {
 		#https://roadtoalm.com/2017/05/02/using-vsts-package-management-as-a-private-powershell-gallery/#comments
 		nuget spec $ModuleName -Force
 
-		[string]$nugetHack = Get-Content "$ModuleName.nuspec"
+		[string]$nugetHack = Get-Content "$moduleDir\$ModuleName.nuspec"
 		$moduleVersion = Get-Metadata $ManifestPath
 		   
 		$a = $nugetHack.replace("1.0.0" , $moduleVersion) 
