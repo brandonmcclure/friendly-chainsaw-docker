@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/powershell:lts-ubuntu-18.04
+FROM mcr.microsoft.com/powershell:lts-7.2-ubuntu-22.04
 
 LABEL maintainer="Brandon McClure (brandonmcclure89@gmail.com)"
 
