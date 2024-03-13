@@ -28,7 +28,8 @@ jobs:
     permissions:
       contents: read
       packages: write
-
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -80,8 +81,27 @@ jobs:
           string: ${{ env.IMAGE_NAME }}
       - name: Save Docker Image archive to local filesystem
         run: "docker save --output fc_pwsh_build.tar ${{env.REGISTRY}}/${{ steps.lowercaseImageName.outputs.lowercase }}"
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+
+          files=fc_pwsh_build.tar fc_pwsh_build.tar
+          echo "hashes=$(sha256sum $files | base64 -w0)" >> "${GITHUB_OUTPUT}"
       - name: Upload application's Docker Image as pipeline artifact
         uses: actions/upload-artifact@v3
         with:
           path: fc_pwsh_build.tar
-          name: fc_pwsh_build.tar
+          name: fc_pwsh_build.tar      
+  provenance:
+    needs:
+      - build-and-push-image
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    with:
+      base64-subjects: "${{ needs.build-and-push-image.outputs.hashes }}"
+      draft-release: true
+      upload-assets: true
