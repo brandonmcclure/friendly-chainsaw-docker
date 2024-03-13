@@ -95,7 +95,7 @@ jobs:
       #     name: fc_pwsh_build.tar      
   provenance:
     needs:
-      - release
+      - build-and-push-image
     permissions:
       actions: read
       id-token: write
